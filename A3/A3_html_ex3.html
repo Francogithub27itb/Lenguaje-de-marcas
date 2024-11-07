@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es-es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySQL Tables Example</title>
+    <style>
+        body {
+            background-color: green; 
+        }
+    </style>
+</head>
+<body>
+    
+    <h2>A nested Lsit:</h2>
+    <ul>
+        <li>Coffe</li>
+        <li>Tea
+            <ul>
+                <li>Black tea</li>
+                <li>Green tea
+                    <ul>
+                        <li>China</li>
+                        <li>Africa</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>Milk</li>
+    </ul>
+
+    <h2>Coffee:</h2>
+    <ul>
+        <li>- black hot drink</li>
+    </ul>
+
+    <h2>Milk:</h2>
+    <ul>
+        <li>- white cold drink</li>
+    </ul>
+
+    <h2>Numbered list:</h2>
+    <ol>
+        <li>Apples</li>
+        <li>Bananas</li>
+        <li>Lemons</li>
+        <li>Oranges</li>
+    </ol>
+
+    <h2>Letters list:</h2>
+    <ol type="A">
+        <li>Apples</li>
+        <li>Bananas</li>
+        <li>Lemins</li>
+        <li>Oranges</li>
+    </ol>
+
+    <h2>Lowercase letters list:</h2>
+    <ol type="a">
+        <li>Apples</li>
+        <li>Bananas</li>
+        <li>Lemons</li>
+        <li>Oranges</li>
+    </ol>
+
+    <h2>Lowercase Roman numbers list:</h2>
+    <ol type="i">
+        <li>Apples</li>
+        <li>Bananas</li>
+        <li>Lemons</li>
+        <li>Oranges</li>
+    </ol>
+
+    <p>Link per enviar emails a una adreça determinada: <a href=""mailto:someone@example.com">Enviar email</a> </p>
+
+    <h2>CREATE TABLE examples</h2>
+    <ul>
+        <li><a href="#">Basic CREATE TABLE statement</a></li>
+        <li><a href="#">Creating a table with a particular storage engine</a></li>
+        <li><a href="#">Creating a table with auto_increment</a></li>
+        <li><a href="#">Creating a table with the current timestamp</a></li>
+        <li><a href="#">Creating a table with TIMESTAMP DEFAULT NOW()</a></li>
+        <li><a href="#">Viewing a table definition</a></li>
+    </ul>
+
+    <h3>Basic CREATE TABLE statement:</h3>
+    <p>A very basic <code>CREATE TABLE</code> statement which should wornk in any SQL database:</p>
+    <pre><code>
+mysql&gt; CREATE TABLE example (
+        id INT,
+        data VARCHAR(100)
+    );
+Query OK, 0 rows affected (0.03 sec)
+    </code></pre>
+            
+    <h3>Creating a table with a particular storage engine:</h3>
+    <p>MySQL provides a variety of different table types with different levels of functionality. The usual default, and most widely used, is <code>InnoDB</code>. Other storage types must be explicitly defined.</p>
+    <pre><code>
+mysql&gt; CREATE TABLE example_innodb (
+        id INT,
+        data VARCHAR(100)
+    ) TYPE=innodb;
+Query OK, 0 rows affected (0.03 sec)
+<p>Note that beginning with MySQL 4.1, <code>ENGINE=innodb</code> is the preferred method of defining the storage type.</p>
+<p>Use <code>SHOW CREATE TABLE</code> (see <a href="#below">below</a>) to check that MySQL has created the table as you defined it.</p>
+    </code></pre>
+            
+    <h3>Creating a table with auto_increment:</h3>
+    <p>Often you'll want to be able to automatically assign a sequential value to a column.</p>
+    <pre><code>
+mysql&gt; CREATE TABLE example_autoincrement (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    data VARCHAR(100)
+);
+Query OK, 0 rows affected (0.01 sec)
+
+mysql&gt; INSERT INTO example_autoincrement (data)
+    -&gt; VALUES ('Hello world');
+Query OK, 1 row affected (0.01 sec)
+
+mysql&gt; SELECT * FROM example_autoincrement;
++----+-------------+
+| id | data        |
++----+-------------+
+|  1 | Hello world |
++----+-------------+
+1 row in set (0.01 sec)
+    </code></pre>
+            
+    <h3>Creating a table with the current timestamp:</h3>
+    <p>Often it's useful to have an automatic timestamp on each record.</p>
+    <pre><code>
+mysql&gt; CREATE TABLE example_timestamp (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    data VARCHAR(100),
+    cur_timestamp TIMESTAMP
+);
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; INSERT INTO example_timestamp (data)
+    -&gt; VALUES ('The time of creation is!');
+Query OK, 1 row affected (0.00 sec)
+
+mysql&gt; SELECT * FROM example_timestamp;
++----+---------------------------+---------------------+
+| id | data                      | cur_timestamp        |
++----+---------------------------+---------------------+
+|  1 | The time of creation is!   | 2004-12-01 20:37:22 |
++----+---------------------------+---------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; UPDATE example_timestamp
+    -&gt; SET data='The current timestamp is:'
+    -&gt; WHERE id=1;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1 Changed: 1 Warnings: 0
+
+mysql&gt; SELECT * FROM example_timestamp;
++----+-----------------------------+---------------------+
+| id | data                        | cur_timestamp        |
++----+-----------------------------+---------------------+
+|  1 | The current timestamp is:    | 2004-12-01 20:38:55 |
++----+-----------------------------+---------------------+
+1 row in set (0.01 sec)           
+    </code></pre>
+    <p>The column <code>cur_timestamp</code> is automatically updated every time the record is changed.</p>       
+    
+    <h3>Creating a table with TIMESTAMP DEFAULT NOW():</h3>
+    <p>MySQL supports the constraint <code>TIMESTAMP DEFAULT NOW()</code> only from version 4.1:</p>
+    <pre><code>
+mysql&gt; CREATE TABLE example_default_now (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    data VARCHAR(100),
+    created TIMESTAMP DEFAULT NOW()
+);
+Query OK, 0 rows affected (0.01 sec)
+    </code></pre>
+    <p>In this case, the column <code>created</code> retains its initial value and is not changed during subsequent updates.</p>
+        
+    <p>For versions prior to 4.1, the only workaround is to create two timestamp columns in a table, and explicitly set the second one when inserting the record. Remember: the first <code>TIMESTAMP</code> will be automatically updated on each record update.</p>
+            
+    <h3>Viewing a table definition:</h3>
+    <p>For basic information on table columns, use <code>DESC tablename</code>:</p>
+    <pre><code>
+mysql&gt; DESC example;
++-------+--------------+------+-----+---------+-------+
+| Field | Type         | Null | Key | Default | Extra |
++-------+--------------+------+-----+---------+-------+
+| id    | int(11)      | NO   | PRI | NULL    |       |
+| data  | varchar(100) | YES  |     | NULL    |       |
++-------+--------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+            
+Exact definition of the table:
+    </code></pre>
+    <pre><code>
+mysql&gt; SHOW CREATE TABLE example;
++--------+------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table  | Create Table                                                                                                                                                     |
++--------+------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| example | CREATE TABLE `example` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `data` varchar(100) DEFAULT NULL,
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 |
++--------+------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.01 sec)
+
+    </code></pre>
+    <p>(this example from MySQL 4.1)</p>    
+</body>
+</html>
